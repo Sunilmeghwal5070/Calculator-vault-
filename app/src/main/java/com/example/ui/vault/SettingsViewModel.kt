@@ -43,6 +43,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     private val githubService = retrofit.create(GitHubService::class.java)
 
+    init {
+        checkForUpdates()
+    }
+
     fun togglePreventScreenshots(enabled: Boolean) {
         _preventScreenshots.value = enabled
         prefs.edit().putBoolean("prevent_screenshots", enabled).apply()
