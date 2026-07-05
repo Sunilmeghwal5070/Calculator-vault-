@@ -200,7 +200,9 @@ fun PinSetupStep(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .safeDrawingPadding()
+            .navigationBarsPadding()
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 24.dp),
         horizontalAlignment = Alignment.End
     ) {
         Spacer(modifier = Modifier.height(32.dp))

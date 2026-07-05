@@ -56,7 +56,8 @@ fun CalculatorScreen(viewModel: CalculatorViewModel, onUnlock: () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .safeDrawingPadding()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .navigationBarsPadding()
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.Bottom
         ) {
             // Top Icons (Removed redundant History text button)
