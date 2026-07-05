@@ -14,7 +14,7 @@ android {
   compileSdk = 35
 
   defaultConfig {
-    applicationId = "com.aistudio.calculatorvault.mjzqyp"
+    applicationId = "com.yash.calculatorvault"
     minSdk = 24
     targetSdk = 35
     versionCode = 1

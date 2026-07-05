@@ -1,5 +1,21 @@
-# Ensure binary files are not modified during push
 *.jar binary
-*.jks binary
 *.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
 *.webp binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+*.rar binary
+*.7z binary
+*.bin binary
+*.exe binary
+*.dll binary
+*.so binary
+*.a binary
+*.lib binary
+*.pyc binary
+*.class binary
