@@ -28,6 +28,11 @@ jobs:
         gradle-version: wrapper
         validate-wrappers: false
 
+    - name: Fix Corrupt Gradle Wrapper
+      run: |
+        mkdir -p gradle/wrapper
+        curl -Lo gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.10.2/gradle/wrapper/gradle-wrapper.jar
+
     - name: Make Gradlew Executable
       run: chmod +x gradlew
 
