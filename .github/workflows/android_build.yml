@@ -1,4 +1,4 @@
-name: Android CI
+name: Build APK
 
 on:
   push:
@@ -30,6 +30,9 @@ jobs:
 
     - name: Make Gradlew Executable
       run: chmod +x gradlew
+
+    - name: Decode Debug Keystore
+      run: base64 -d debug.keystore.base64 > debug.keystore
 
     - name: Build with Gradle
       run: ./gradlew assembleDebug --stacktrace -x test -x lint
