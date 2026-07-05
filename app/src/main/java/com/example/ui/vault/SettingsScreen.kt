@@ -1,7 +1,5 @@
 package com.example.ui.vault
 
-import android.app.Application
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -155,7 +153,6 @@ fun SettingsScreen(
 
             SettingsSection("General") {
                 val currentLanguage by viewModel.language.collectAsState()
-                val updateStatus by viewModel.updateStatus.collectAsState()
                 var showLanguageDialog by remember { mutableStateOf(false) }
 
                 SettingsItem(
@@ -203,86 +200,6 @@ fun SettingsScreen(
                             }
                         }
                     )
-                }
-
-                SettingsItem(
-                    title = "Check for updates",
-                    icon = Icons.Default.Update,
-                    onClick = { viewModel.checkForUpdates() }
-                )
-
-                // Update Status Dialogs
-                when (val status = updateStatus) {
-                    is UpdateStatus.Checking -> {
-                        AlertDialog(
-                            onDismissRequest = { },
-                            containerColor = Color(0xFF1C1C1E),
-                            title = { Text("Checking for updates...", color = Color.White) },
-                            text = { 
-                                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                                    CircularProgressIndicator(color = Color(0xFFFF9F0A))
-                                }
-                            },
-                            confirmButton = { }
-                        )
-                    }
-                    is UpdateStatus.UpdateAvailable -> {
-                        AlertDialog(
-                            onDismissRequest = { viewModel.dismissUpdateStatus() },
-                            containerColor = Color(0xFF1C1C1E),
-                            title = { Text("Update Available!", color = Color.White) },
-                            text = {
-                                Column {
-                                    Text("New version ${status.release.tagName} is available.", color = Color.White)
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Text(status.release.body, color = Color.Gray, fontSize = 14.sp)
-                                }
-                            },
-                            confirmButton = {
-                                TextButton(onClick = {
-                                    viewModel.dismissUpdateStatus()
-                                    // Direct to the release page for 100% reliability
-                                    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://github.com/Sunilmeghwal5070/Calculator/releases/latest"))
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    viewModel.getApplication<Application>().startActivity(intent)
-                                }) {
-                                    Text("Update Now", color = Color(0xFFFF9F0A))
-                                }
-                            },
-                            dismissButton = {
-                                TextButton(onClick = { viewModel.dismissUpdateStatus() }) {
-                                    Text("Later", color = Color.White)
-                                }
-                            }
-                        )
-                    }
-                    is UpdateStatus.UpToDate -> {
-                        AlertDialog(
-                            onDismissRequest = { viewModel.dismissUpdateStatus() },
-                            containerColor = Color(0xFF1C1C1E),
-                            title = { Text("No Updates", color = Color.White) },
-                            text = { Text("You are using the latest version.", color = Color.White) },
-                            confirmButton = {
-                                TextButton(onClick = { viewModel.dismissUpdateStatus() }) {
-                                    Text("OK", color = Color(0xFFFF9F0A))
-                                }
-                            }
-                        )
-                    }
-                    is UpdateStatus.Error -> {
-                        AlertDialog(
-                            onDismissRequest = { viewModel.dismissUpdateStatus() },
-                            containerColor = Color(0xFF1C1C1E),
-                            title = { Text("Error", color = Color.White) },
-                            text = { Text(status.message, color = Color.White) },
-                            confirmButton = {
-                                TextButton(onClick = { viewModel.dismissUpdateStatus() }) {
-                                    Text("OK", color = Color(0xFFFF9F0A))
-                                }
-                            }
-                        )
-                    }
-                    else -> {}
                 }
 
                 SettingsItem(

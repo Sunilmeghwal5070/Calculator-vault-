@@ -9,16 +9,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.api.GitHubRelease
-import com.example.data.api.GitHubService
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
     private val prefs = application.getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -28,24 +22,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     private val _language = MutableStateFlow(prefs.getString("language", "English") ?: "English")
     val language: StateFlow<String> = _language.asStateFlow()
-
-    private val _updateStatus = MutableStateFlow<UpdateStatus>(UpdateStatus.Idle)
-    val updateStatus: StateFlow<UpdateStatus> = _updateStatus.asStateFlow()
-
-    private val moshi = Moshi.Builder()
-        .addLast(KotlinJsonAdapterFactory())
-        .build()
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://api.github.com/")
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .build()
-
-    private val githubService = retrofit.create(GitHubService::class.java)
-
-    init {
-        checkForUpdates()
-    }
 
     fun togglePreventScreenshots(enabled: Boolean) {
         _preventScreenshots.value = enabled
@@ -111,39 +87,4 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             }
         }
     }
-
-    fun checkForUpdates() {
-        viewModelScope.launch {
-            _updateStatus.value = UpdateStatus.Checking
-            try {
-                // Using owner and repo from the user's previous context
-                val release = githubService.getLatestRelease("Sunilmeghwal5070", "Calculator")
-                
-                // Parse tag name to number. Tag is "v17" etc.
-                val latestVersion = release.tagName.filter { it.isDigit() }.toIntOrNull() ?: 0
-                val currentVersion = com.example.BuildConfig.VERSION_CODE
-                
-                if (latestVersion > currentVersion) {
-                    _updateStatus.value = UpdateStatus.UpdateAvailable(release)
-                } else {
-                    _updateStatus.value = UpdateStatus.UpToDate
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _updateStatus.value = UpdateStatus.Error("Failed to check for updates")
-            }
-        }
-    }
-
-    fun dismissUpdateStatus() {
-        _updateStatus.value = UpdateStatus.Idle
-    }
-}
-
-sealed class UpdateStatus {
-    object Idle : UpdateStatus()
-    object Checking : UpdateStatus()
-    object UpToDate : UpdateStatus()
-    data class UpdateAvailable(val release: GitHubRelease) : UpdateStatus()
-    data class Error(val message: String) : UpdateStatus()
 }
